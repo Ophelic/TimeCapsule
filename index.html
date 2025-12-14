@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Capsule</title>
+    <!-- MediaPipe Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['"JetBrains Mono"', 'monospace'],
+              display: ['"Orbitron"', 'sans-serif'],
+            },
+            colors: {
+              cyan: {
+                400: '#22d3ee',
+                500: '#06b6d4',
+                900: '#164e63',
+              },
+              neon: {
+                pink: '#ff00ff',
+                blue: '#00ffff',
+                green: '#00ff00',
+              }
+            },
+            animation: {
+              'spin-slow': 'spin 8s linear infinite',
+              'spin-reverse-slow': 'spin-reverse 12s linear infinite',
+              'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'radar': 'radar 2s infinite linear',
+              'glitch': 'glitch 1s linear infinite',
+              'grid-flow': 'gridFlow 2s linear infinite',
+              'shooting-star': 'shootingStar 5s linear infinite',
+              'scan': 'scan 4s linear infinite',
+            },
+            keyframes: {
+              radar: {
+                '0%': { transform: 'scale(0)', opacity: '0.5' },
+                '100%': { transform: 'scale(2)', opacity: '0' },
+              },
+              'spin-reverse': {
+                'from': { transform: 'rotate(360deg)' },
+                'to': { transform: 'rotate(0deg)' },
+              },
+              glitch: {
+                '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' },
+                '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' },
+                '62%': { transform: 'translate(0,0) skew(5deg)' },
+              },
+              gridFlow: {
+                '0%': { transform: 'perspective(500px) rotateX(60deg) translateY(0)' },
+                '100%': { transform: 'perspective(500px) rotateX(60deg) translateY(40px)' }
+              },
+              shootingStar: {
+                '0%': { transform: 'translateX(0) translateY(0) rotate(-45deg)', opacity: '1' },
+                '100%': { transform: 'translateX(-500px) translateY(500px) rotate(-45deg)', opacity: '0' }
+              },
+              scan: {
+                  '0%': { backgroundPosition: '0% 0%' },
+                  '100%': { backgroundPosition: '0% 100%' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #050505;
+        color: #e0f2fe;
+        overflow-x: hidden;
+      }
+      /* Custom scrollbar for cyberpunk feel */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #06b6d4;
+        border-radius: 3px;
+      }
+      
+      /* Glitch Text Effect Helpers */
+      .glitch-text {
+        position: relative;
+      }
+      .glitch-text::before,
+      .glitch-text::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #050505;
+      }
+      .glitch-text::before {
+        left: 2px;
+        text-shadow: -1px 0 #ff00ff;
+        clip: rect(24px, 550px, 90px, 0);
+        animation: glitch-anim-2 3s infinite linear alternate-reverse;
+      }
+      .glitch-text::after {
+        left: -2px;
+        text-shadow: -1px 0 #00ffff;
+        clip: rect(85px, 550px, 140px, 0);
+        animation: glitch-anim 2.5s infinite linear alternate-reverse;
+      }
+      @keyframes glitch-anim {
+        0% { clip: rect(10px, 9999px, 30px, 0); }
+        20% { clip: rect(60px, 9999px, 80px, 0); }
+        40% { clip: rect(20px, 9999px, 90px, 0); }
+        60% { clip: rect(80px, 9999px, 10px, 0); }
+        80% { clip: rect(40px, 9999px, 60px, 0); }
+        100% { clip: rect(30px, 9999px, 50px, 0); }
+      }
+      @keyframes glitch-anim-2 {
+        0% { clip: rect(60px, 9999px, 10px, 0); }
+        20% { clip: rect(10px, 9999px, 50px, 0); }
+        40% { clip: rect(80px, 9999px, 20px, 0); }
+        60% { clip: rect(30px, 9999px, 60px, 0); }
+        80% { clip: rect(50px, 9999px, 90px, 0); }
+        100% { clip: rect(20px, 9999px, 40px, 0); }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
+    "three": "https://esm.sh/three@^0.182.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "Time Capsule",
+  "description": "A cyberpunk-styled AR location messaging app. Leave virtual time capsules at physical locations and retrieve them when you return. Powered by Gemini for memory analysis.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera",
+    "microphone"
+  ]
+}
